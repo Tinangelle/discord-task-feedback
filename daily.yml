@@ -1,0 +1,28 @@
+name: Daily Task Evaluation
+
+on:
+  schedule:
+    - cron: '59 15 * * *'  # UTC时间，等于北京时间23:59
+  workflow_dispatch:
+
+jobs:
+  task-daily-check:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: pip install -r requirements.txt
+
+    - name: Run daily task check
+      env:
+        DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        TASK_KEYWORDS: 番茄钟,写作1000字,游戏开发,音乐,画画,编程
+      run: python check_and_reply.py
