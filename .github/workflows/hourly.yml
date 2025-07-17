@@ -27,3 +27,11 @@ jobs:
         SUBMISSION_CHANNEL_ID: '1395085510036164750'
         TASK_KEYWORDS: 番茄钟,写作1000字,游戏开发,音乐,画画,编程
       run: python read_messages.py
+
+    - name: Commit task_log.json
+      run: |
+        git config --global user.name "TaskBot"
+        git config --global user.email "taskbot@bot.com"
+        git add task_log.json
+        git commit -m "update task log" || echo "No changes to commit"
+        git push https://x-access-token:${{ secrets.PUSH_TOKEN }}@github.com/${{ github.repository }} HEAD:main
