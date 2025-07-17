@@ -1,0 +1,39 @@
+name: Read Discord Messages Hourly
+
+on:
+  schedule:
+    - cron: '0 * * * *'  # 每小时运行一次
+  workflow_dispatch:
+
+jobs:
+  read-discord:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repo
+      uses: actions/checkout@v3
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+
+    - name: Install dependencies
+      run: pip install requests
+
+    - name: Run message reader
+      env:
+        BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
+        SUBMISSION_CHANNEL_ID: '1395085510036164750'
+        TASK_KEYWORDS: 番茄钟,写作1000字,游戏开发,音乐,画画,编程
+      run: python read_messages.py
+
+    - name: Commit task_log.json
+      env:
+        PUSH_TOKEN: ${{ secrets.PUSH_TOKEN }}
+      run: |
+        git config --global user.name "TaskBot"
+        git config --global user.email "taskbot@bot.com"
+        git add task_log.json
+        git commit -m "update task log" || echo "No changes to commit"
+        git push https://x-access-token:${{ secrets.PUSH_TOKEN }}@github.com/Tinangelle/discord-task-feedback.git HEAD:main
