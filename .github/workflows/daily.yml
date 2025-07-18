@@ -2,7 +2,7 @@ name: Daily Task Evaluation
 
 on:
   schedule:
-    - cron: '59 15 * * *'  # UTC时间，等于北京时间23:59
+    - cron: '59 15 * * *'  # UTC时间，对应北京时间23:59
   workflow_dispatch:
 
 jobs:
@@ -26,3 +26,6 @@ jobs:
         DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
         TASK_KEYWORDS: 番茄钟,写作1000字,游戏开发,音乐,画画,编程
       run: python check_and_reply.py
+
+    - name: Run task feedback
+      run: python process_log_and_reward.py
